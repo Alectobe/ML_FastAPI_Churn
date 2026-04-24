@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from schemas.churn import FeatureVectorChurn
-from routers import data
+from routers import data, model
 
 app = FastAPI(
     title="ML Churn Service",
@@ -9,6 +9,7 @@ app = FastAPI(
 )
 
 app.include_router(data.router)
+app.include_router(model.router)
 
 @app.get("/")
 def root():
