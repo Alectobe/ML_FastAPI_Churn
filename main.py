@@ -1,6 +1,13 @@
 from fastapi import FastAPI
 from schemas.churn import FeatureVectorChurn
 from routers import data, model
+from contextlib import asynccontextmanager
+from routers.model import init_model
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_model()
+    yield
 
 app = FastAPI(
     title="ML Churn Service",
@@ -18,3 +25,4 @@ def root():
 @app.post("/predict")
 def predict(features: FeatureVectorChurn):
     return features
+
