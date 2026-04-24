@@ -1,6 +1,7 @@
 import pandas as pd
 from fastapi import APIRouter, HTTPException, Query
 from pathlib import Path
+from services.preprocessing import get_split_info
 
 router = APIRouter(prefix="/dataset", tags=["dataset"])
 
@@ -39,3 +40,11 @@ def dataset_info():
             "churned": churn_distribution.get(1, 0),  # churn == 1, клиент ушёл
         }
     }
+
+@router.get("/split-info")
+def split_info(
+    test_size: float = Query(default=0.2, ge=0.1, le=0.5),
+    random_state: int = Query(default=42, ge=0),
+):
+    """Возвращает размеры train/test выборок и распределение классов churn"""
+    return get_split_info(test_size=test_size, random_state=random_state)
