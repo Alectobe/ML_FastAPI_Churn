@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from schemas.churn import FeatureVectorChurn
 
 app = FastAPI(
     title="ML Churn Service",
@@ -9,3 +10,7 @@ app = FastAPI(
 @app.get("/")
 def root():
     return {"message": "ML churn service is running"} 
+
+@app.post("/predict")
+def predict(features: FeatureVectorChurn):
+    return features
