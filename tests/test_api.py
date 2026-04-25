@@ -65,19 +65,15 @@ def test_model_status_after_train(trained_client):
 # --- тесты предсказания ---
 
 def test_predict_after_train(trained_client):
-    """POST /predict с валидными данными возвращает churn_prediction и вероятности."""
+    """POST /predict с валидными данными возвращает churn и probability."""
     response = trained_client.post("/predict", json=VALID_PREDICT_PAYLOAD)
     assert response.status_code == 200
 
     body = response.json()
-    assert "churn_prediction" in body
-    assert "churn_label" in body
-    assert "probability_stayed" in body
-    assert "probability_churned" in body
-    assert body["churn_prediction"] in [0, 1]
-    assert body["churn_label"] in ["stayed", "churned"]
-    assert 0.0 <= body["probability_stayed"] <= 1.0
-    assert 0.0 <= body["probability_churned"] <= 1.0
+    assert "churn" in body
+    assert "probability" in body
+    assert body["churn"] in [0, 1]
+    assert 0.0 <= body["probability"] <= 1.0
 
 
 def test_predict_without_trained_model(client):
