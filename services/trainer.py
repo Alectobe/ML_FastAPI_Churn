@@ -9,6 +9,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
 from schemas.churn import TrainingConfigChurn  
 from services.feature_schema import NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET, FEATURE_ORDER
+from core.errors import DatasetNotFoundError, DatasetEmptyError, UnknownModelTypeError
 
 DATA_PATH = Path("data/churn_dataset.csv")
 
@@ -27,7 +28,7 @@ DEFAULT_HYPERPARAMETERS = {
 def build_pipeline(config: TrainingConfigChurn) -> Pipeline:
     """Собирает sklearn Pipeline с предобработанной моделью"""
     if config.model_type not in MODEL_REGISTRY:
-        raise ValueError(f"Unsupported model type: {config.model_type}. Supported types: {list(MODEL_REGISTRY.keys())}")
+        raise UnknownModelTypeError(model_type=config.model_type, available=list(MODEL_REGISTRY.keys()))
 
     params = {
         **DEFAULT_HYPERPARAMETERS[config.model_type],
@@ -70,19 +71,19 @@ def train_churn_model(
     """
     # проверяем наличие файла
     if not DATA_PATH.exists():
-        raise FileNotFoundError(f"Файл не найден: {DATA_PATH}")
+        raise DatasetNotFoundError(f"Файл не найден: {DATA_PATH}")
     
     df = pd.read_csv(DATA_PATH)
 
     # проверяем что датасет не пустой
     if df.empty:
-        raise ValueError("Датасет пуст")
+        raise DatasetEmptyError()
     
     # проверяем наличие всех нужных столбцов
     required_columns = NUMERIC_FEATURES + CATEGORICAL_FEATURES + [TARGET]
     missing = [col for col in required_columns if col not in df.columns]
     if missing:
-        raise ValueError(f"В датасете отсутствуют столбцы: {missing}")
+        raise DatasetNotFoundError(f"В датасете отсутствуют столбцы: {missing}")
     
     X = df[FEATURE_ORDER]
     y = df[TARGET]

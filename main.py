@@ -8,6 +8,7 @@ from schemas.churn import FeatureVectorChurn, PredictionResponseChurn
 from routers import data, model
 from routers.model import init_model
 import routers.model as model_router
+from core.errors import register_error_handlers
 
 
 _PREDICT_FEATURES = [
@@ -66,6 +67,8 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+register_error_handlers(app)
 
 app.include_router(data.router)
 app.include_router(model.router)

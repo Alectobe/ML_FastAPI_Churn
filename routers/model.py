@@ -30,14 +30,18 @@ def train_model(
     test_size: float = Query(default=0.2, ge=0.1, le=0.5),
     random_state: int = Query(default=42, ge=0),
 ):
+    """
+    Обучает модель на churn_dataset.csv и сохраняет на диск.
+
+    Возможные ошибки:
+    - `DATASET_NOT_FOUND` (404) — файл churn_dataset.csv не найден
+    - `DATASET_EMPTY` (422) — датасет пуст
+    - `UNKNOWN_MODEL_TYPE` (422) — передан неизвестный model_type
+    - `VALIDATION_ERROR` (422) — некорректные типы параметров
+    """
     global trained_pipeline
 
-    try:
-        result = train_churn_model(config=config, test_size=test_size, random_state=random_state)
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
+    result = train_churn_model(config=config, test_size=test_size, random_state=random_state)
 
     trained_pipeline = result["pipeline"]
 
