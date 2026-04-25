@@ -52,10 +52,9 @@ def build_pipeline(config: TrainingConfigChurn) -> Pipeline:
         ("cat", categorical_transformer, CATEGORICAL_FEATURES),
     ])
 
-    # итоговый пайплайн: предобработка + лог регрессия
     pipeline = Pipeline(steps=[
         ("preprocessor", preprocessor),
-        ("classifier", LogisticRegression(max_iter=100, random_state=42),)
+        ("classifier", classifier),
     ])
 
     return pipeline

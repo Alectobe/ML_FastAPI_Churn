@@ -18,17 +18,17 @@ def _save_history(history: list) -> None:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
 def append_training_history(
-        model_type: str, 
-        hyperparameters: dict, 
+        model_type: str,
+        hyperparameters: dict,
         metrics: dict
 ) -> dict:
+    """Добавляет запись об обучении модели в историю"""
     record = {
         "trained_at": datetime.now().isoformat(),
         "model_type": model_type,
         "hyperparameters": hyperparameters,
         "metrics": metrics,
     }
-    """Добавляет запись об обучении модели в историю"""
     history = _load_history()
     history.append(record)
     _save_history(history)

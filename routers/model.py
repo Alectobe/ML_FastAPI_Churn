@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 from schemas.churn import TrainingConfigChurn
 from services.trainer import train_churn_model
 from services.model_score import save_churn_model, load_churn_model, get_model_status

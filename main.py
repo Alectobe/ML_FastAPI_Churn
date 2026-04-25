@@ -2,20 +2,14 @@ from contextlib import asynccontextmanager
 from typing import Union, List
 
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, Body
 
 from schemas.churn import FeatureVectorChurn, PredictionResponseChurn
 from routers import data, model
 from routers.model import init_model
 import routers.model as model_router
-from core.errors import register_error_handlers
-
-
-_PREDICT_FEATURES = [
-    "monthly_fee", "usage_hours", "support_requests",
-    "account_age_months", "failed_payments", "autopay_enabled",
-    "region", "device_type", "payment_method",
-]
+from core.errors import register_error_handlers, ModelNotTrainedError
+from services.feature_schema import FEATURE_ORDER
 
 _SINGLE_EXAMPLE = {
     "monthly_fee": 75.5,
@@ -82,15 +76,9 @@ def root():
 def _run_predictions(items: List[FeatureVectorChurn]) -> List[PredictionResponseChurn]:
     """Runs model inference on a list of feature vectors."""
     if model_router.trained_pipeline is None:
-        raise HTTPException(
-            status_code=503,
-            detail=(
-                "Модель ещё не обучена. "
-                "Сначала выполните POST /model/train."
-            ),
-        )
+        raise ModelNotTrainedError()
 
-    df = pd.DataFrame([item.model_dump() for item in items])[_PREDICT_FEATURES]
+    df = pd.DataFrame([item.model_dump() for item in items])[FEATURE_ORDER]
     predictions = model_router.trained_pipeline.predict(df)
     probabilities = model_router.trained_pipeline.predict_proba(df)
 
