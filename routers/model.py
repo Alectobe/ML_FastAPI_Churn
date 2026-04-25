@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from schemas.churn import TrainingConfigChurn
 from services.trainer import train_churn_model
 from services.model_score import save_churn_model, load_churn_model, get_model_status
+from services.feature_schema import FEATURE_ORDER, FEATURE_SCHEMA, EXAMPLE_REQUEST
 
 router = APIRouter(prefix="/model", tags=["model"])
 
@@ -58,3 +59,12 @@ def train_model(
 def model_status():
     """Показывает статус модели: обучена ли, когда и с какими метриками."""
     return get_model_status()
+
+@router.get("/schema")
+def model_schema():
+    """Показывает JSON-схему для объекта TrainingConfigChurn, который нужно отправлять на /train"""
+    return {
+        "feature_order": FEATURE_ORDER,
+        "features": FEATURE_SCHEMA,
+        "example_request": EXAMPLE_REQUEST,
+    }

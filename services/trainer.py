@@ -8,26 +8,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
 from schemas.churn import TrainingConfigChurn  
+from services.feature_schema import NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET, FEATURE_ORDER
 
 DATA_PATH = Path("data/churn_dataset.csv")
-
-# явно задаём типы признаков
-NUMERIC_FEATURES = [
-    "monthly_fee",
-    "usage_hours",
-    "support_requests",
-    "account_age_months",
-    "failed_payments",
-    "autopay_enabled",
-]
-
-CATEGORICAL_FEATURES = [
-    "region",
-    "device_type",
-    "payment_method",
-]
-
-TARGET = "churn"
 
 # реестр доступных моделей — добавлять новые сюда
 MODEL_REGISTRY = {
@@ -41,8 +24,16 @@ DEFAULT_HYPERPARAMETERS = {
     "random_forest": {"n_estimators": 100, "random_state": 42},
 }
 
-def build_pipeline() -> Pipeline:
+def build_pipeline(config: TrainingConfigChurn) -> Pipeline:
     """Собирает sklearn Pipeline с предобработанной моделью"""
+    if config.model_type not in MODEL_REGISTRY:
+        raise ValueError(f"Unsupported model type: {config.model_type}. Supported types: {list(MODEL_REGISTRY.keys())}")
+
+    params = {
+        **DEFAULT_HYPERPARAMETERS[config.model_type],
+        **config.hyperparameters,
+    }
+    classifier = MODEL_REGISTRY[config.model_type](**params)
 
     # трансформер для числовых признаков - масштабирование (StandarcScaler)
     numeric_transformer = Pipeline(steps=[
@@ -75,7 +66,7 @@ def train_churn_model(
 ) -> dict:
     """
     Читает датасет, обучает Pipeline считает метрики на тестовой выборке.
-    Возвращает обученный pipeline и словарь с метриками
+    Возвращает обученный pipeline и словарь с метриками и конфигом
     """
     # проверяем наличие файла
     if not DATA_PATH.exists():
@@ -93,7 +84,7 @@ def train_churn_model(
     if missing:
         raise ValueError(f"В датасете отсутствуют столбцы: {missing}")
     
-    X = df[NUMERIC_FEATURES + CATEGORICAL_FEATURES]
+    X = df[FEATURE_ORDER]
     y = df[TARGET]
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -103,7 +94,7 @@ def train_churn_model(
         stratify=y,
     )
 
-    pipeline = build_pipeline()
+    pipeline = build_pipeline(config)
     pipeline.fit(X_train, y_train)
 
     y_pred = pipeline.predict(X_test)
