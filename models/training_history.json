@@ -374,5 +374,140 @@
       "train_size": 8,
       "test_size": 2
     }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.480422",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.495104",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.510923",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.532079",
+    "model_type": "random_forest",
+    "hyperparameters": {
+      "n_estimators": 10,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.547207",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.565603",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.580496",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.603104",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
+  },
+  {
+    "trained_at": "2026-04-25T12:33:07.618374",
+    "model_type": "logreg",
+    "hyperparameters": {
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "train_size": 8,
+      "test_size": 2
+    }
   }
 ]
