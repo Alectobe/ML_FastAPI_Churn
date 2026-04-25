@@ -30,3 +30,7 @@ class PredictionResponseChurn(BaseModel):
     probability_churned: float = Field(
         ..., description="Вероятность что клиент уйдёт (класс 1)"
     )
+
+class TrainingConfigChurn(BaseModel):
+    model_type: str = "logreg"
+    hyperparameters: dict = {}

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
+from schemas.churn import TrainingConfigChurn
 from services.trainer import train_churn_model
 from services.model_score import save_churn_model, load_churn_model, get_model_status
 
@@ -24,13 +25,14 @@ def init_model() -> None:
 
 @router.post("/train")
 def train_model(
+    config: TrainingConfigChurn = TrainingConfigChurn(),
     test_size: float = Query(default=0.2, ge=0.1, le=0.5),
     random_state: int = Query(default=42, ge=0),
 ):
     global trained_pipeline
 
     try:
-        result = train_churn_model(test_size=test_size, random_state=random_state)
+        result = train_churn_model(config=config, test_size=test_size, random_state=random_state)
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except ValueError as e:
@@ -38,18 +40,17 @@ def train_model(
 
     trained_pipeline = result["pipeline"]
 
-    # добавляем явную диагностику
-    print(f"[train] Обучение завершено, метрики: {result['metrics']}")
-    
-    try:
-        save_churn_model(pipeline=result["pipeline"], metrics=result["metrics"])
-        print("[train] Модель успешно сохранена на диск")
-    except Exception as e:
-        print(f"[train] ОШИБКА при сохранении: {e}")
-        raise HTTPException(status_code=500, detail=f"Ошибка сохранения модели: {e}")
+    save_churn_model(
+        pipeline=result["pipeline"],
+        metrics=result["metrics"],
+        model_type=result["model_type"],
+        hyperparameters=result["hyperparameters"],
+    )
 
     return {
         "status": "model trained successfully",
+        "model_type": result["model_type"],
+        "hyperparameters": result["hyperparameters"],
         "metrics": result["metrics"],
     }
 

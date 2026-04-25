@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = BASE_DIR / "models" / "churn_model.joblib"
 META_PATH = BASE_DIR / "models" / "churn_model_meta.joblib"
 
-def save_churn_model(pipeline, metrics: dict) -> None:
+def save_churn_model(pipeline, metrics: dict, model_type: str, hyperparameters: dict) -> None:
     """Сохраняет обученный pipeline и метаданные на диск"""
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
@@ -18,6 +18,8 @@ def save_churn_model(pipeline, metrics: dict) -> None:
     meta = {
         "trained_at": datetime.now().isoformat(),
         "metrics": metrics,
+        "model_type": model_type,
+        "hyperparameters": hyperparameters,
     }
     joblib.dump(meta, META_PATH)
 
@@ -44,6 +46,8 @@ def get_model_status() -> dict:
             "trained_at": None,
             "metrics": None,
             "model_path": str(MODEL_PATH),
+            "hyperparameters": None,
+            "model_type": None,
         }
     meta = joblib.load(META_PATH)
 
@@ -52,4 +56,6 @@ def get_model_status() -> dict:
         "trained_at": meta['trained_at'],
         "metrics": meta['metrics'],
         "model_path": str(MODEL_PATH),
+        "hyperparameters": meta['hyperparameters'],
+        "model_type": meta['model_type'],
     }

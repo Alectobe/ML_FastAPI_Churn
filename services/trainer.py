@@ -5,7 +5,9 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
+from schemas.churn import TrainingConfigChurn  
 
 DATA_PATH = Path("data/churn_dataset.csv")
 
@@ -26,6 +28,18 @@ CATEGORICAL_FEATURES = [
 ]
 
 TARGET = "churn"
+
+# реестр доступных моделей — добавлять новые сюда
+MODEL_REGISTRY = {
+    "logreg": LogisticRegression,
+    "random_forest": RandomForestClassifier,
+}
+
+# дефолтные гиперпараметры для каждой модели
+DEFAULT_HYPERPARAMETERS = {
+    "logreg": {"max_iter": 1000, "random_state": 42},
+    "random_forest": {"n_estimators": 100, "random_state": 42},
+}
 
 def build_pipeline() -> Pipeline:
     """Собирает sklearn Pipeline с предобработанной моделью"""
@@ -55,6 +69,7 @@ def build_pipeline() -> Pipeline:
     return pipeline
 
 def train_churn_model(
+        config: TrainingConfigChurn,
         test_size: float = 0.2,
         random_state: int = 42,
 ) -> dict:
@@ -93,6 +108,11 @@ def train_churn_model(
 
     y_pred = pipeline.predict(X_test)
 
+    final_params = {
+        **DEFAULT_HYPERPARAMETERS[config.model_type],
+        **config.hyperparameters,
+    }
+
     metrics = {
         "accuracy": round(accuracy_score(y_test, y_pred), 4),
         "f1_score": round(f1_score(y_test, y_pred), 4),
@@ -100,4 +120,4 @@ def train_churn_model(
         "test_size": len(X_test),
     }
 
-    return {"pipeline": pipeline, "metrics": metrics}
+    return {"pipeline": pipeline, "metrics": metrics, "model_type": config.model_type, "hyperparameters": final_params}
