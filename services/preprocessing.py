@@ -1,26 +1,9 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from pathlib import Path
+from services.feature_schema import NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET
 
 DATA_PATH = Path("data/churn_dataset.csv")
-
-# явно задаём типы признаков на основе описания задачи
-NUMERIC_FEATURES = [
-    "monthly_fee",
-    "usage_hours",
-    "support_requests",
-    "account_age_months",
-    "failed_payments",
-    "autopay_enabled",
-]
-
-CATEGORICAL_FEATURES = [
-    "region",
-    "device_type",
-    "payment_method",
-]
-
-TARGET = "churn"
 
 def load_and_prepare(
         test_size: float = 0.2,

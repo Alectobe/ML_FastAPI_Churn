@@ -17,20 +17,6 @@ class DatasetRowChurn(FeatureVectorChurn):
     churn: int
 
 
-class PredictionResponseChurn(BaseModel):
-    churn_prediction: int = Field(
-        ..., description="0 — клиент остался, 1 — клиент ушёл"
-    )
-    churn_label: str = Field(
-        ..., description="'stayed' или 'churned'"
-    )
-    probability_stayed: float = Field(
-        ..., description="Вероятность что клиент останется (класс 0)"
-    )
-    probability_churned: float = Field(
-        ..., description="Вероятность что клиент уйдёт (класс 1)"
-    )
-
 class TrainingConfigChurn(BaseModel):
     model_type: str = "logreg"
     hyperparameters: dict = {}
