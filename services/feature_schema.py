@@ -79,3 +79,5 @@ FEATURE_SCHEMA = {
 
 # пример валидного запроса — собирается автоматически из схемы
 EXAMPLE_REQUEST = {field: meta["example"] for field, meta in FEATURE_SCHEMA.items()}
+
+MODEL_TYPES = ["logreg", "random_forest"]

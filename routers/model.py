@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, Query
 from schemas.churn import TrainingConfigChurn
 from services.trainer import train_churn_model
 from services.model_score import save_churn_model, load_churn_model, get_model_status
-from services.feature_schema import FEATURE_ORDER, FEATURE_SCHEMA, EXAMPLE_REQUEST
+from services.history_store import append_training_history, get_history, get_last_record
+from services.feature_schema import FEATURE_ORDER, FEATURE_SCHEMA, EXAMPLE_REQUEST, MODEL_TYPES
 
 router = APIRouter(prefix="/model", tags=["model"])
 
@@ -52,6 +53,12 @@ def train_model(
         hyperparameters=result["hyperparameters"],
     )
 
+    append_training_history(
+        model_type=result["model_type"],
+        hyperparameters=result["hyperparameters"],
+        metrics=result["metrics"],
+    )
+
     return {
         "status": "model trained successfully",
         "model_type": result["model_type"],
@@ -71,4 +78,19 @@ def model_schema():
         "feature_order": FEATURE_ORDER,
         "features": FEATURE_SCHEMA,
         "example_request": EXAMPLE_REQUEST,
+    }
+
+@router.get("/metrics")
+def model_metrics(
+    model_type: str = Query(default=None, description=f"Фильтр по типу модели: {MODEL_TYPES}"),
+    limit: int = Query(default=10, ge=1, le=100)
+):
+    """Возвращает историю метрик обучений, можно фильтровать по model_type и ограничивать количество записей"""
+    last = get_last_record(model_type=model_type)
+    history = get_history(model_type=model_type, limit=limit)
+
+    return {
+        "last_training": last,
+        "history": history,
+        "total_shown": len(history),
     }

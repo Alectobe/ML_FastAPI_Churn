@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from schemas.churn import TrainingConfigChurn  
 from services.feature_schema import NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET, FEATURE_ORDER
 from core.errors import DatasetNotFoundError, DatasetEmptyError, UnknownModelTypeError
@@ -99,6 +99,7 @@ def train_churn_model(
     pipeline.fit(X_train, y_train)
 
     y_pred = pipeline.predict(X_test)
+    y_proba = pipeline.predict_proba(X_test)[:, 1]
 
     final_params = {
         **DEFAULT_HYPERPARAMETERS[config.model_type],
@@ -108,6 +109,7 @@ def train_churn_model(
     metrics = {
         "accuracy": round(accuracy_score(y_test, y_pred), 4),
         "f1_score": round(f1_score(y_test, y_pred), 4),
+        "roc_auc": round(roc_auc_score(y_test, y_proba), 4),
         "train_size": len(X_train),
         "test_size": len(X_test),
     }
