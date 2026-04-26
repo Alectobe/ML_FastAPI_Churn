@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from pathlib import Path
 from services.feature_schema import NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET
 
-DATA_PATH = Path("data/churn_dataset.csv")
+DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "churn_dataset.csv"
 
 def load_and_prepare(
         test_size: float = 0.2,

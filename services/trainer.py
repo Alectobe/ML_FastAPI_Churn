@@ -11,7 +11,7 @@ from schemas.churn import TrainingConfigChurn
 from services.feature_schema import NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET, FEATURE_ORDER
 from core.errors import DatasetNotFoundError, DatasetEmptyError, UnknownModelTypeError
 
-DATA_PATH = Path("data/churn_dataset.csv")
+DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "churn_dataset.csv"
 
 # реестр доступных моделей — добавлять новые сюда
 MODEL_REGISTRY = {
